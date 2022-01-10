@@ -33,7 +33,7 @@ if(!paymentDetails.amount || !paymentDetails.customer_Id || !paymentDetails.cust
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-    params['CUST_ID'] = paymentDetails.customer_Id;
+    params['CUST_ID'] = 'CUST_'paymentDetails.customer_Id;
     params['TXN_AMOUNT'] = paymentDetails.amount;
     params['CALLBACK_URL'] = 'https://developerpayment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
