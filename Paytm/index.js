@@ -35,7 +35,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
 //     params['CUST_ID'] = 'CUST_' + paymentDetails.customer_Id;
     params['TXN_AMOUNT'] = paymentDetails.amount;
-    params['CALLBACK_URL'] = 'localhost:4100/callback';
+    params['CALLBACK_URL'] = 'http://localhost:4100/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = paymentDetails.customerPhone;
   
