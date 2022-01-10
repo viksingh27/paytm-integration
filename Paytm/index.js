@@ -18,13 +18,13 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   console.log(">>>>",req.body)
   var paymentDetails = {
     orderID: req.body.id,
-    amount: req.body.cost,
+    amount: req.body.amount,
     customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
-    customerRest: req.body.rest_name
+   
 }
-if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerRest) {
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
     res.status(400).send('Payment failed')
 } else {
     var params = {};
