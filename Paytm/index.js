@@ -19,12 +19,12 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   var paymentDetails = {
     orderID: req.body.id,
     amount: req.body.amount,
-    customer_Id: req.body.name,
+//     customer_Id: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
    
 }
-if(!paymentDetails.amount || !paymentDetails.customer_Id || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
+if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
     res.status(400).send('Payment failed')
 } else {
     var params = {};
@@ -33,7 +33,7 @@ if(!paymentDetails.amount || !paymentDetails.customer_Id || !paymentDetails.cust
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-    params['CUST_ID'] = 'CUST_' + paymentDetails.customer_Id;
+//     params['CUST_ID'] = 'CUST_' + paymentDetails.customer_Id;
     params['TXN_AMOUNT'] = paymentDetails.amount;
     params['CALLBACK_URL'] = 'https://developerpayment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
