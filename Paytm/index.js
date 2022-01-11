@@ -110,7 +110,7 @@ app.post('/callback', (req, res) => {
 
            var _result = JSON.parse(response);
              if(_result.STATUS == 'TXN_SUCCESS') {
-                 res.send('payment sucess')
+                
                  res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
              }else {
                  res.send('payment failed')
