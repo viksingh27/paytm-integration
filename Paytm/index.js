@@ -39,7 +39,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
 //     params['CUST_ID'] = paymentDetails.customerId;
     params['TXN_AMOUNT'] = paymentDetails.amount;
     // change port number
-    params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
+    params['CALLBACK_URL'] = 'https://zomato-clone-app-pay-status.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = paymentDetails.customerPhone;
 
