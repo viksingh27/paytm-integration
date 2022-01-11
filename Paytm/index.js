@@ -10,7 +10,7 @@ app.use(cors())
 const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
-const PORT = process.env.PORT || 4100;
+
 
 app.get("/", (req,res)=>{
   res.send("Hii From Server")
@@ -134,6 +134,6 @@ app.post("/callback", (req, res) => {
      });
 });
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 4100, () => {
   console.log(`App is listening on Port ${PORT}`);
 });
