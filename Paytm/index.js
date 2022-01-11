@@ -111,7 +111,7 @@ app.post("/callback", (req, res) => {
          post_res.on('end', function(){
            console.log('S2S Response: ', response, "\n");
            var _results = JSON.parse(response);
-           res.redirect(`http://localhost:3000`)
+           res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
            });
        });
 
