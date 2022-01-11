@@ -96,7 +96,7 @@ app.post("/callback", (req, res) => {
          path: '/merchant-status/getTxnStatus',
          method: 'POST',
          headers: {
-           'Content-Type': 'application/x-www-form-urlencoded',
+           'Content-Type': 'application/json',
            'Content-Length': post_data.legth
          }
        };
