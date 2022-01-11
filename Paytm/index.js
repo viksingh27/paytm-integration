@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 4100;
 app.post('/paynow', [parseUrl, parseJson], (req, res) => {
    var paymentDetails = {
     orderID: req.body.id,
-    amount: req.body.cost,
+    amount: req.body.amount,
     customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
