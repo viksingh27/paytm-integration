@@ -10,7 +10,7 @@ app.use(cors())
 const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4100;
 
 app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   // Route for making payment
