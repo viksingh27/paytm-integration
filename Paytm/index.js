@@ -97,7 +97,7 @@ app.post("/callback", (req, res) => {
          method: 'POST',
          headers: {
            'Content-Type': 'application/x-www-form-urlencoded',
-           'Content-Length': post_data.length
+           'Content-Length': post_data.legth
          }
        };
 
