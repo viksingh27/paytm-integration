@@ -17,7 +17,7 @@ app.post('/paynow', [parseUrl, parseJson], (req, res) => {
    var paymentDetails = {
     orderID: req.body.id,
     amount: req.body.amount,
-    customerId: req.body.name,
+//     customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
 //     customerHotel: req.body.hotel
@@ -30,11 +30,11 @@ app.post('/paynow', [parseUrl, parseJson], (req, res) => {
     params['WEBSITE'] = config.PaytmConfig.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] = 'TEST_' + orderID;
-    params['CUST_ID'] = 'customer_001';
-    params['TXN_AMOUNT'] = req.body.amount.toString();
+    params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
+//     params['CUST_ID'] = 'customer_001';
+    params['TXN_AMOUNT'] = paymentDetails.amount;
     params['CALLBACK_URL'] = 'http://localhost:3000/callback';
-    params['EMAIL'] = req.body.email;
+    params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = req.body.phone.toString();
 
 
