@@ -1,61 +1,66 @@
 const express = require("express");
 const https = require("https");
 const qs = require("querystring");
-const checksum_lib = require("./Paytm/checksum");
-const config = require("./Paytm/config");
+const checksum_lib = require("./paytm/checksum");
+const config = require("./paytm/config");
 const cors = require('cors');
-
-
 const app = express();
 app.use(cors())
+
 const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
-const PORT = process.env.PORT || 4100;
+const PORT = process.env.PORT || 4000;
 
-app.post('/paynow', [parseUrl, parseJson], (req, res) => {
-   var paymentDetails = {
+app.post("/paynow", [parseUrl, parseJson], (req, res) => {
+  // Route for making payment
+
+  var paymentDetails = {
     orderID: req.body.id,
     amount: req.body.amount,
-//     customerId: req.body.name,
+    customerId: req.body.name,
     customerEmail: req.body.email,
-    customerPhone: req.body.phone,
-//     customerHotel: req.body.hotel
-} 
-  if (!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
+    customerPhone: req.body.phone
+}
+console.log(paymentDetails)
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
     res.status(400).send('Payment failed')
-  } else {
+} else {
     var params = {};
     params['MID'] = config.PaytmConfig.mid;
     params['WEBSITE'] = config.PaytmConfig.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-//     params['CUST_ID'] = 'customer_001';
-    params['TXN_AMOUNT'] = paymentDetails.amount.toString();
+    params['CUST_ID'] = paymentDetails.customerId;
+    params['TXN_AMOUNT'] = paymentDetails.amount;
+    // change port number
     params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
-    params['MOBILE_NO'] = req.body.phone.toString();
+    params['MOBILE_NO'] = paymentDetails.customerPhone;
 
 
     checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
-      var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
-      // var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
+        var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
+        // var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
 
-      var form_fields = "";
-      for (var x in params) {
-        form_fields += "<input type='hidden' name='" + x + "' value='" + params[x] + "' >";
-      }
-      form_fields += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "' >";
+        var form_fields = "";
+        for (var x in params) {
+            form_fields += "<input type='hidden' name='" + x + "' value='" + params[x] + "' >";
+        }
+        form_fields += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "' >";
 
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.write('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
-      res.end();
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.write('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
+        res.end();
     });
-  }
-})
+}
+});
 
-app.post('/callback', (req, res) => {
+
+app.post("/callback", (req, res) => {
+  // Route for verifiying payment
+
   var body = '';
 
   req.on('data', function (data) {
@@ -108,10 +113,10 @@ app.post('/callback', (req, res) => {
          post_res.on('end', function(){
            console.log('S2S Response: ', response, "\n");
 
-           var _result = JSON.parse(response);
-             if(_result.STATUS == 'TXN_SUCCESS') {
-                
-                 res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
+           var _results = JSON.parse(response);
+             if(_results.STATUS == 'TXN_SUCCESS') {
+                console.log("^^^^^^^",_results)
+                res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
              }else {
                  res.send('payment failed')
              }
@@ -123,7 +128,7 @@ app.post('/callback', (req, res) => {
        post_req.end();
       });
      });
-})
+});
 
 app.listen(PORT, () => {
   console.log(`App is listening on Port ${PORT}`);
