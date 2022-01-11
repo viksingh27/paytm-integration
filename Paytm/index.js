@@ -22,12 +22,12 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   var paymentDetails = {
     orderID: req.body.id,
     amount: req.body.amount,
-    customerId: req.body.name,
+//     customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone
 }
 console.log(paymentDetails)
-if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
+if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
     res.status(400).send('Payment failed')
 } else {
     var params = {};
@@ -36,7 +36,7 @@ if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.custo
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-    params['CUST_ID'] = paymentDetails.customerId;
+//     params['CUST_ID'] = paymentDetails.customerId;
     params['TXN_AMOUNT'] = paymentDetails.amount;
     // change port number
     params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
