@@ -19,25 +19,25 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   var paymentDetails = {
     orderID: req.body.id,
     amount: req.body.amount,
-//     customerId: req.body.name,
+    // customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
-//     customerRest: req.body.hotel_name
+    // customerRest: req.body.hotel_name
 }
 if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
-    res.status(400).send('Payment failed')
+  res.status(400).send('Payment failed')
 } else {
-    var params = {};
-    params['MID'] = config.PaytmConfig.mid;
-    params['WEBSITE'] = config.PaytmConfig.website;
-    params['CHANNEL_ID'] = 'WEB';
-    params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-//     params['CUST_ID'] = paymentDetails.customerId;
-    params['TXN_AMOUNT'] = paymentDetails.amount;
-    params['CALLBACK_URL'] = 'https://developerpayment.herokuapp.com/callback';
-    params['EMAIL'] = paymentDetails.customerEmail;
-    params['MOBILE_NO'] = paymentDetails.customerPhone;
+  var params = {};
+  params['MID'] = config.PaytmConfig.mid;
+  params['WEBSITE'] = config.PaytmConfig.website;
+  params['CHANNEL_ID'] = 'WEB';
+  params['INDUSTRY_TYPE_ID'] = 'Retail';
+  params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
+  params['CUST_ID'] = paymentDetails.customerId;
+  params['TXN_AMOUNT'] = paymentDetails.amount;
+  params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
+  params['EMAIL'] = paymentDetails.customerEmail;
+  params['MOBILE_NO'] = paymentDetails.customerPhone;
   
 
     checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
@@ -56,8 +56,9 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     });
 }
 });
+
 app.post("/callback", (req, res) => {
-  // Route for verifiying payment
+//   Route for verifiying payment
 
   var body = '';
 
@@ -69,18 +70,18 @@ app.post("/callback", (req, res) => {
      var html = "";
      var post_data = qs.parse(body);
 
-     // received params in callback
+//      received params in callback
      console.log('Callback Response: ', post_data, "\n");
 
 
-     // verify the checksum
+//      verify the checksum
      var checksumhash = post_data.CHECKSUMHASH;
-     // delete post_data.CHECKSUMHASH;
+     delete post_data.CHECKSUMHASH;
      var result = checksum_lib.verifychecksum(post_data, config.PaytmConfig.key, checksumhash);
      console.log("Checksum Result => ", result, "\n");
 
 
-     // Send Server-to-Server request to verify Order Status
+//      Send Server-to-Server request to verify Order Status
      var params = {"MID": config.PaytmConfig.mid, "ORDERID": post_data.ORDERID};
 
      checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
@@ -89,8 +90,8 @@ app.post("/callback", (req, res) => {
        post_data = 'JsonData='+JSON.stringify(params);
 
        var options = {
-         hostname: 'securegw-stage.paytm.in', // for staging
-         // hostname: 'securegw.paytm.in', // for production
+         hostname: 'securegw-stage.paytm.in',// for staging
+         hostname: 'securegw.paytm.in',  //for production
          port: 443,
          path: '/merchant-status/getTxnStatus',
          method: 'POST',
@@ -101,7 +102,7 @@ app.post("/callback", (req, res) => {
        };
 
 
-       // Set up the request
+//        Set up the request
        var response = "";
        var post_req = https.request(options, function(post_res) {
          post_res.on('data', function (chunk) {
