@@ -12,7 +12,9 @@ const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
 const PORT = 'mongodb+srv://testDevUser:testDevUser@cluster0.bpimv.mongodb.net/edu_intern?retryWrites=true&w=majority';
-
+app.get("/", (req,res)=>{
+    res.send("Hii From Server")
+})
 app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   // Route for making payment
   console.log(">>>>",req.body)
