@@ -33,7 +33,7 @@ app.post('/paynow', [parseUrl, parseJson], (req, res) => {
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
 //     params['CUST_ID'] = 'customer_001';
     params['TXN_AMOUNT'] = paymentDetails.amount;
-    params['CALLBACK_URL'] = 'http://localhost:3000/callback';
+    params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = req.body.phone.toString();
 
