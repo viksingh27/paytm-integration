@@ -96,7 +96,7 @@ form.parse(req, (error, fields, file) => {
                 const data = JSON.stringify(params); 
  
                 const options = { 
-                    hostname: "securegw-stage.paytm.in", 
+                    hostname: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=fields.ORDERID", 
                     port: 443, 
                     path: "/order/status", 
                     method: "POST", 
