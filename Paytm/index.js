@@ -36,7 +36,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
 //     params['CUST_ID'] = 'CUST_' + paymentDetails.customer_Id;
     params['TXN_AMOUNT'] = paymentDetails.amount;
-    params['CALLBACK_URL'] = 'http://localhost:4100/callback';
+    params['CALLBACK_URL'] = 'https://securegw-stage.paytm.in/theia/api/v1/processTransaction?mid={config.PaytmConfig.mid}&orderId={ORDER_ID}';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = paymentDetails.customerPhone;
   
