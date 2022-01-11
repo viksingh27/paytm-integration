@@ -11,7 +11,8 @@ app.use(cors())
 const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
-const PORT = 'mongodb+srv://testDevUser:testDevUser@cluster0.bpimv.mongodb.net/edu_intern?retryWrites=true&w=majority';
+const PORT = process.env.PORT || 4100;
+
 app.get("/", (req,res)=>{
     res.send("Hii From Server")
 })
