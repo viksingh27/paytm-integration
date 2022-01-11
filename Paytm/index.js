@@ -18,14 +18,13 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   console.log(">>>>",req.body)
   var paymentDetails = {
     orderID: req.body.id,
-    amount: req.body.amount,
-//     customer_Id: req.body.name,
+    amount: req.body.cost,
+    customerId: req.body.name.replace(/\w/, ''),
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
-//     customerRest: req.body.rest_name
-   
+    customerRest: req.body.rest_name
 }
-if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerRest) {
     res.status(400).send('Payment failed')
 } else {
     var params = {};
@@ -34,7 +33,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-//     params['CUST_ID'] = 'CUST_' + paymentDetails.customer_Id;
+    params['CUST_ID'] = paymentDetails.customerId;
     params['TXN_AMOUNT'] = paymentDetails.amount;
     params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
@@ -93,14 +92,12 @@ app.post("/callback", (req, res) => {
          hostname: 'securegw-stage.paytm.in', // for staging
          // hostname: 'securegw.paytm.in', // for production
          port: 443,
-         path: '/order/status',
+         path: '/merchant-status/getTxnStatus',
          method: 'POST',
          headers: {
-           'Content-Type': 'application/json',
-           'Content-Length': data.legth
-         },
-         post_data:data
-         
+           'Content-Type': 'application/x-www-form-urlencoded',
+           'Content-Length': post_data.length
+         }
        };
 
 
@@ -114,7 +111,7 @@ app.post("/callback", (req, res) => {
          post_res.on('end', function(){
            console.log('S2S Response: ', response, "\n");
            var _results = JSON.parse(response);
-//            res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
+           res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
            });
        });
 
