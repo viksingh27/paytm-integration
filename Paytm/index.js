@@ -36,7 +36,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
 //     params['CUST_ID'] = 'CUST_' + paymentDetails.customer_Id;
     params['TXN_AMOUNT'] = paymentDetails.amount;
-    params['CALLBACK_URL'] = 'http://localhost:4100/callback';
+    params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = paymentDetails.customerPhone;
   
@@ -93,12 +93,14 @@ app.post("/callback", (req, res) => {
          hostname: 'securegw-stage.paytm.in', // for staging
          // hostname: 'securegw.paytm.in', // for production
          port: 443,
-         path: '/merchant-status/getTxnStatus',
+         path: '/order/status',
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
-           'Content-Length': post_data.legth
-         }
+           'Content-Length': data.legth
+         },
+         post_data:data
+         
        };
 
 
