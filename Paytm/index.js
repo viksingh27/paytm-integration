@@ -33,7 +33,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
     params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-    params['CUST_ID'] = paymentDetails.customerId;
+//     params['CUST_ID'] = paymentDetails.customerId;
     params['TXN_AMOUNT'] = paymentDetails.amount;
     params['CALLBACK_URL'] = 'https://zomato-clone-app-payment.herokuapp.com/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
