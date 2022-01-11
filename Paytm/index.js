@@ -4,7 +4,7 @@ const qs = require("querystring");
 const checksum_lib = require("./Paytm/checksum");
 const config = require("./Paytm/config");
 const cors = require('cors');
-
+const form = new formidable.IncomingForm(); 
 
 const app = express();
 app.use(cors())
@@ -58,68 +58,86 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
 });
 app.post("/callback", (req, res) => {
   // Route for verifiying payment
-
-  var body = '';
-
-  req.on('data', function (data) {
-     body += data;
-  });
-
-   req.on('end', function () {
-     var html = "";
-     var post_data = qs.parse(body);
-
-     // received params in callback
-     console.log('Callback Response: ', post_data, "\n");
-
-
-     // verify the checksum
-     var checksumhash = post_data.CHECKSUMHASH;
-     // delete post_data.CHECKSUMHASH;
-     var result = checksum_lib.verifychecksum(post_data, config.PaytmConfig.key, checksumhash);
-     console.log("Checksum Result => ", result, "\n");
-
-
-     // Send Server-to-Server request to verify Order Status
-     var params = {"MID": config.PaytmConfig.mid, "ORDERID": post_data.ORDERID};
-
-     checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
-
-       params.CHECKSUMHASH = checksum;
-       post_data = 'JsonData='+JSON.stringify(params);
-
-       var options = {
-         hostname: 'securegw-stage.paytm.in', // for staging
-         // hostname: 'securegw.paytm.in', // for production
-         port: 443,
-         path: '/merchant-status/getTxnStatus',
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/x-www-form-urlencoded',
-           'Content-Length': post_data.length
-         }
-       };
-
-
-       // Set up the request
-       var response = "";
-       var post_req = https.request(options, function(post_res) {
-         post_res.on('data', function (chunk) {
-           response += chunk;
-         });
-
-         post_res.on('end', function(){
-           console.log('S2S Response: ', response, "\n");
-           var _results = JSON.parse(response);
-           res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
-           });
-       });
-
-       // post the data
-       post_req.write(post_data);
-       post_req.end();
-      });
-     });
+form.parse(req, (error, fields, file) => { 
+        if (error) { 
+            console.log(error); 
+            res.status(500).json({ error }); 
+        } 
+ 
+        const checkSumHash = fields.CHECKSUMHASH; 
+        delete fields.CHECKSUMHASH; 
+ 
+        // verify the signature 
+ 
+        const isVerified = PaytmChecksum.verifySignature( 
+            fields, 
+            config.PaytmConfig.mid, 
+            checkSumHash 
+        ); 
+ 
+        if (isVerified) { 
+            // response is valid 
+ 
+            // get the transaction status from the paytm Server 
+            var params = {}; 
+            params["MID"] = fields.config.PaytmConfig.mid; 
+            params["ORDER_ID"] = fields.ORDERID; 
+ 
+            PaytmChecksum.generateSignature( 
+                params, 
+                config.PaytmConfig.mid 
+            ).then(checksum => { 
+                // go to the Paytm Server and get the payment status 
+                params["CHECKSUMHASH"] = checksum; 
+                const data = JSON.stringify(params); 
+ 
+                const options = { 
+                    hostname: "securegw-stage.paytm.in", 
+                    port: 443, 
+                    path: "/order/status", 
+                    method: "POST", 
+                    header: { 
+                        'Content-Type': 'application/json', 
+                        'Content-Length': data.legth 
+                    }, 
+                    data: data 
+                }; 
+                var response = ""; 
+                var request = https.request(options, (responseFromPaytmServer) => { 
+                    responseFromPaytmServer.on('data', (chunk) => { 
+                        response += chunk; 
+                    }); 
+                    responseFromPaytmServer.on('end', () => { 
+                        if (JSON.parse(response).STATUS === 'TXN_SUCCESS') { 
+                            // Success 
+                            //res.send('Payment was SUCCESS'); 
+ 
+                            // (1) Save the order and payment details in MongoDB 
+ 
+                            res.sendFile(__dirname + '/success.html'); 
+                        } else { 
+                            // FAILURE 
+                            //res.send('Payment was FAILURE'); 
+ 
+                            // (1) Save the order and payment details in MongoDB 
+                            res.sendFile(__dirname + '/failure.html'); 
+                        } 
+                    }); 
+                }); 
+                request.write(data); 
+                request.end(); 
+            }).catch(error => { 
+                res.status(500).json({ 
+                    message: "Error in Transaction", 
+                    error: error 
+                }); 
+            }); 
+        } else { 
+            // response is NOT Valid 
+            console.log('Checksum mismatch'); 
+            res.status(500).json({ error: "It's a hacker !" }); 
+        } 
+    })
 });
 
 app.listen(PORT, () => {
