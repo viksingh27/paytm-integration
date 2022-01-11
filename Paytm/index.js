@@ -135,5 +135,5 @@ app.post("/callback", (req, res) => {
 });
 
 app.listen(process.env.PORT || 4100, () => {
-  console.log(`App is listening on Port ${PORT}`);
+  console.log(`App is listening on 4100` );
 });
