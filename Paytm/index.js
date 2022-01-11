@@ -19,7 +19,7 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   var paymentDetails = {
     orderID: req.body.id,
     amount: req.body.cost,
-    customerId: req.body.name.replace(/\w/, ''),
+    customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
 //     customerRest: req.body.rest_name
