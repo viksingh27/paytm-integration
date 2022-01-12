@@ -29,10 +29,12 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
     customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
-   customerHotel: req.body.restName
+    customerHotel: req.body.restName
 }
-if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerHotel)
- else {
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerHotel) {
+    res.status(400).send('Payment failed')
+    console.log(paymentDetails)
+} else {
     var params = {};
     params['MID'] = config.PaytmConfig.mid;
     params['WEBSITE'] = config.PaytmConfig.website;
@@ -41,9 +43,10 @@ if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.custo
     params['ORDER_ID'] = paymentDetails.orderId;
     params['CUST_ID'] = paymentDetails.customerId;
     params['TXN_AMOUNT'] = paymentDetails.amount;
-    params['CALLBACK_URL'] = 'https://zomato-clone-app-pay-status.herokuapp.com/callback';
+    params['CALLBACK_URL'] = 'http://localhost:4100/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = paymentDetails.customerPhone;
+  
 
 
     checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
