@@ -29,11 +29,10 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
     customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone,
-    customerHotel: req.body.hotel_name
+   customerHotel: req.body.restName
 }
-if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerHotel) {
-    res.status(400).send('Payment failed')
-} else {
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerHotel)
+ else {
     var params = {};
     params['MID'] = config.PaytmConfig.mid;
     params['WEBSITE'] = config.PaytmConfig.website;
