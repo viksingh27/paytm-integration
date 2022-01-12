@@ -98,10 +98,10 @@ app.post("/callback", (req, res) => {
          hostname: 'securegw-stage.paytm.in', // for staging
          // hostname: 'securegw.paytm.in', // for production
          port: 443,
-         path: '/merchant-status/getTxnStatus',
+        path: `/theia/api/v1/processTransaction?mid=${config.PaytmConfig.mid}&orderId=${post_data.ORDERID}`,
          method: 'POST',
          headers: {
-           'Content-Type': 'application/x-www-form-urlencoded',
+           'Content-Type': 'application/json',
            'Content-Length': post_data.length
          }
        };
