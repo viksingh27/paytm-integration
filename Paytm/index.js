@@ -98,7 +98,7 @@ app.post("/callback", (req, res) => {
          hostname: 'securegw-stage.paytm.in', // for staging
          // hostname: 'securegw.paytm.in', // for production
          port: 443,
-        path: `/theia/api/v1/processTransaction?mid=${config.PaytmConfig.mid}&orderId=${post_data.ORDERID}`,
+        path: `/v3/order/status`,
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
