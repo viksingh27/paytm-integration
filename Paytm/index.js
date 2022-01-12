@@ -28,9 +28,10 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
     amount: req.body.amount,
     customerId: req.body.name,
     customerEmail: req.body.email,
-    customerPhone: req.body.phone
+    customerPhone: req.body.phone,
+    customerHotel: req.body.hotel
 }
-if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone || !paymentDetails.customerHotel) {
     res.status(400).send('Payment failed')
 } else {
     var params = {};
