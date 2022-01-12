@@ -59,8 +59,8 @@ function verifychecksum(params, key, checksumhash) {
 
   //TODO: after PG fix on thier side remove below two lines
   if (typeof checksumhash !== "undefined") {
-    checksumhash = checksumhash.replace('\n', '');
-    checksumhash = checksumhash.replace('\r', '');
+    checksumhash = checksumhash.replace('n', '');
+    checksumhash = checksumhash.replace('r', '');
     var temp = decodeURIComponent(checksumhash);
     var checksum = crypt.decrypt(temp, key);
     var salt = checksum.substr(checksum.length - 4);
