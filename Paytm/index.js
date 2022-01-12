@@ -98,7 +98,7 @@ app.post("/callback", (req, res) => {
          hostname: 'securegw-stage.paytm.in', // for staging
          // hostname: 'securegw.paytm.in', // for production
          port: 443,
-        path: `/v3/order/status`,
+        path: '/merchant-status/getTxnStatus',
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
