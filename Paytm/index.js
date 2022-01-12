@@ -2,32 +2,35 @@ const express = require("express");
 const https = require("https");
 const qs = require("querystring");
 const checksum_lib = require("./Paytm/checksum");
-const config = require("./Paytm/config");
-const cors = require('cors');
+const config = require('./Paytm/config');
 const app = express();
+const cors = require('cors');
+const bodyparser = require('body-parser');
 app.use(cors())
+app.use(bodyparser.json());
+
+
 
 const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
+const PORT = process.env.PORT || 4100;
 
-
-app.get("/", (req,res)=>{
-  res.send("Hii From Server")
+app.get('/form', (req, res) => {
+  res.sendFile(path.join(__dirname + '/index.html'))
 })
 
 app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   // Route for making payment
 
   var paymentDetails = {
-    orderID: req.body.id,
+    orderId : req.body.id,
     amount: req.body.amount,
-//     customerId: req.body.name,
+    customerId: req.body.name,
     customerEmail: req.body.email,
     customerPhone: req.body.phone
 }
-console.log(paymentDetails)
-if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
+if(!paymentDetails.amount || !paymentDetails.customerId || !paymentDetails.customerEmail || !paymentDetails.customerPhone) {
     res.status(400).send('Payment failed')
 } else {
     var params = {};
@@ -35,11 +38,10 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
     params['WEBSITE'] = config.PaytmConfig.website;
     params['CHANNEL_ID'] = 'WEB';
     params['INDUSTRY_TYPE_ID'] = 'Retail';
-    params['ORDER_ID'] = 'TEST_'  + paymentDetails.orderID;
-//     params['CUST_ID'] = paymentDetails.customerId;
+    params['ORDER_ID'] = paymentDetails.orderId;
+    params['CUST_ID'] = paymentDetails.customerId;
     params['TXN_AMOUNT'] = paymentDetails.amount;
-    // change port number
-    params['CALLBACK_URL'] = 'https://zompay.herokuapp.com/callback';
+    params['CALLBACK_URL'] = 'http://localhost:4100/callback';
     params['EMAIL'] = paymentDetails.customerEmail;
     params['MOBILE_NO'] = paymentDetails.customerPhone;
 
@@ -62,6 +64,7 @@ if(!paymentDetails.amount || !paymentDetails.customerEmail || !paymentDetails.cu
 });
 
 
+
 app.post("/callback", (req, res) => {
   // Route for verifiying payment
 
@@ -76,14 +79,14 @@ app.post("/callback", (req, res) => {
      var post_data = qs.parse(body);
 
      // received params in callback
-     console.log('Callback Response: ', post_data, "\n");
+     console.log('Callback Response: ', post_data, "n");
 
 
      // verify the checksum
      var checksumhash = post_data.CHECKSUMHASH;
      // delete post_data.CHECKSUMHASH;
      var result = checksum_lib.verifychecksum(post_data, config.PaytmConfig.key, checksumhash);
-     console.log("Checksum Result => ", result, "\n");
+     console.log("Checksum Result => ", result, "n");
 
 
      // Send Server-to-Server request to verify Order Status
@@ -98,10 +101,10 @@ app.post("/callback", (req, res) => {
          hostname: 'securegw-stage.paytm.in', // for staging
          // hostname: 'securegw.paytm.in', // for production
          port: 443,
-        path: '/merchant-status/getTxnStatus',
+         path: '/merchant-status/getTxnStatus',
          method: 'POST',
          headers: {
-           'Content-Type': 'application/json',
+           'Content-Type': 'application/x-www-form-urlencoded',
            'Content-Length': post_data.length
          }
        };
@@ -115,12 +118,12 @@ app.post("/callback", (req, res) => {
          });
 
          post_res.on('end', function(){
-           console.log('S2S Response: ', response, "\n");
+           console.log('S2S Response: ', response, "n");
 
-           var _results = JSON.parse(response);
-             if(_results.STATUS == 'TXN_SUCCESS') {
-                console.log("^^^^^^^",_results)
-                res.redirect(`http://localhost:3000/viewOrder?status=${_results.STATUS}&ORDERID=${_results.ORDERID}&date=${_results.TXNDATE}&bank=${_results.BANKNAME}`)
+           var _result = JSON.parse(response);
+             if(_result.STATUS == 'TXN_SUCCESS') {
+                 console.log("^^^^^^^",_result)
+                res.redirect(`http://localhost:3000/viewOrder?status=${_result.STATUS}&ORDERID=${_result.ORDERID}&date=${_result.TXNDATE}&bank=${_result.BANKNAME}`)
              }else {
                  res.send('payment failed')
              }
@@ -134,6 +137,14 @@ app.post("/callback", (req, res) => {
      });
 });
 
-app.listen(process.env.PORT || 4100, () => {
-  console.log(`App is listening on 4100` );
+
+app.listen(PORT, () => {
+  console.log(`App is listening on Port ${PORT}`);
 });
+
+
+
+
+
+
+
