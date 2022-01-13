@@ -126,7 +126,7 @@ app.post("/callback", (req, res) => {
            var _result = JSON.parse(response);
              if(_result.STATUS == 'TXN_SUCCESS') {
                  console.log("^^^^^^^",_result)
-                res.redirect(`https://competent-easley-4d184f.netlify.app/viewOrder?status=${_result.STATUS}&ORDERID=${_result.ORDERID}&date=${_result.TXNDATE}&bank=${_result.BANKNAME}`)
+                res.redirect(`https://xenodochial-blackwell-783256.netlify.app/viewOrder?status=${_result.STATUS}&ORDERID=${_result.ORDERID}&date=${_result.TXNDATE}&bank=${_result.BANKNAME}`)
              }else {
                  res.send('payment failed')
              }
